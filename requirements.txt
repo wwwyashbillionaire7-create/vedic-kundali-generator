@@ -1,0 +1,4 @@
+pyjhora
+fastapi
+uvicorn
+requests

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vedic Kundali Generator</title>
+    <meta name="description"
+        content="Generate your Vedic birth chart (Kundali) with planetary positions, nakshatras, and dasha periods using VedAstro API">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">☿</span>
+                    <h1>Vedic Kundali</h1>
+                </div>
+                <p class="tagline">Powered by PyJHora (Local)</p>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Input Form Section -->
+            <section class="form-section" id="formSection">
+                <div class="form-card">
+                    <h2 class="section-title">
+                        <span class="title-icon">✦</span>
+                        Enter Birth Details
+                    </h2>
+                    <form id="kundaliForm" class="kundali-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name</label>
+                                <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="birthDate">Date of Birth</label>
+                                <input type="date" id="birthDate" name="birthDate" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="birthTime">Time of Birth</label>
+                                <input type="time" id="birthTime" name="birthTime" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group full-width">
+                                <label for="birthPlace">Place of Birth</label>
+                                <input type="text" id="birthPlace" name="birthPlace" placeholder="Enter city name"
+                                    required>
+                                <div class="place-suggestions" id="placeSuggestions"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-row coordinates-row" id="coordinatesRow" style="display: none;">
+                            <div class="form-group">
+                                <label for="latitude">Latitude</label>
+                                <input type="number" step="any" id="latitude" name="latitude"
+                                    placeholder="e.g., 28.6139">
+                            </div>
+                            <div class="form-group">
+                                <label for="longitude">Longitude</label>
+                                <input type="number" step="any" id="longitude" name="longitude"
+                                    placeholder="e.g., 77.2090">
+                            </div>
+                            <div class="form-group">
+                                <label for="timezone">Timezone</label>
+                                <input type="text" id="timezone" name="timezone" placeholder="e.g., +05:30"
+                                    value="+05:30">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="ayanamsa">
+                                    Ayanamsa
+                                    <span class="info-icon"
+                                        title="Precession correction for sidereal calculations. Lahiri is most common in India.">ⓘ</span>
+                                </label>
+                                <select id="ayanamsa" name="ayanamsa">
+                                    <optgroup label="Most Popular">
+                                        <option value="LAHIRI" selected>Lahiri - Indian Standard</option>
+                                        <option value="KP">KP (Krishnamurti)</option>
+                                        <option value="TRUE_CITRA">True Citra (Spica at 0° Libra)</option>
+                                    </optgroup>
+                                    <optgroup label="Traditional">
+                                        <option value="RAMAN">B.V. Raman</option>
+                                        <option value="YUKTESHWAR">Sri Yukteshwar</option>
+                                        <option value="SURYASIDDHANTA">Surya Siddhanta</option>
+                                        <option value="ARYABHATA">Aryabhata</option>
+                                    </optgroup>
+                                    <optgroup label="Other">
+                                        <option value="FAGAN">Fagan</option>
+                                        <option value="TRUE_REVATI">True Revati</option>
+                                        <option value="TRUE_PUSHYA">True Pushya</option>
+                                        <option value="TRUE_MULA">True Mula</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="chartStyle">
+                                    Chart Style
+                                    <span class="info-icon"
+                                        title="Auto-detected based on birth location. South Indian used in TN, KA, KL, AP, TS. North Indian used in rest of India.">ⓘ</span>
+                                </label>
+                                <select id="chartStyle" name="chartStyle">
+                                    <option value="Auto">🎯 Auto-Detect (Recommended)</option>
+                                    <option value="South">South Indian (TN, KA, KL, AP, TS)</option>
+                                    <option value="North">North Indian (UP, MP, RJ, DL, etc.)</option>
+                                    <option value="East">East Indian (WB, OD, AS)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <span class="btn-text">Generate Kundali</span>
+                            <span class="btn-loader" style="display: none;">
+                                <span class="loader-dot"></span>
+                                <span class="loader-dot"></span>
+                                <span class="loader-dot"></span>
+                            </span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <!-- Person Info Card -->
+                <div class="result-card person-info-card">
+                    <h3 class="card-title">
+                        <span class="title-icon">👤</span>
+                        <span id="personName">-</span>
+                    </h3>
+                    <div class="birth-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Birth Date</span>
+                            <span class="detail-value" id="displayDate">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Birth Time</span>
+                            <span class="detail-value" id="displayTime">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Birth Place</span>
+                            <span class="detail-value" id="displayPlace">-</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="back-btn" id="backBtn">← Generate Another</button>
+                        <button class="export-btn" id="exportMdBtn">📄 Export Markdown</button>
+                        <button class="export-btn" id="exportPdfBtn">📑 Print/PDF</button>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <!-- Lagna Chart -->
+                    <div class="result-card chart-card">
+                        <h3 class="card-title">
+                            <span class="title-icon">◈</span>
+                            Lagna Chart (D1)
+                        </h3>
+                        <div class="chart-container" id="lagnaChart">
+                            <div class="chart-loading">Loading chart...</div>
+                        </div>
+                    </div>
+
+                    <!-- Navamsa Chart -->
+                    <div class="result-card chart-card">
+                        <h3 class="card-title">
+                            <span class="title-icon">◇</span>
+                            Navamsa Chart (D9)
+                        </h3>
+                        <div class="chart-container" id="navamsaChart">
+                            <div class="chart-loading">Loading chart...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Planetary Positions -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <span class="title-icon">☉</span>
+                        Planetary Positions
+                    </h3>
+                    <div class="table-container">
+                        <table class="data-table" id="planetTable">
+                            <thead>
+                                <tr>
+                                    <th>Planet</th>
+                                    <th>Sign</th>
+                                    <th>Degree</th>
+                                    <th>Nakshatra</th>
+                                    <th>Pada</th>
+                                    <th>House</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="planetTableBody">
+                                <tr>
+                                    <td colspan="7" class="loading-cell">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- House Positions -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <span class="title-icon">🏠</span>
+                        House (Bhava) Cusps
+                    </h3>
+                    <div class="table-container">
+                        <table class="data-table" id="houseTable">
+                            <thead>
+                                <tr>
+                                    <th>House</th>
+                                    <th>Sign</th>
+                                    <th>Degree</th>
+                                    <th>Lord</th>
+                                    <th>Planets</th>
+                                </tr>
+                            </thead>
+                            <tbody id="houseTableBody">
+                                <tr>
+                                    <td colspan="5" class="loading-cell">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Ashtakavarga -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <span class="title-icon">📊</span>
+                        Ashtakavarga (Planetary Strength by Sign)
+                    </h3>
+                    <div class="table-container">
+                        <table class="data-table" id="ashtakavargaTable">
+                            <thead>
+                                <tr>
+                                    <th>Planet</th>
+                                    <th>Ari</th>
+                                    <th>Tau</th>
+                                    <th>Gem</th>
+                                    <th>Can</th>
+                                    <th>Leo</th>
+                                    <th>Vir</th>
+                                    <th>Lib</th>
+                                    <th>Sco</th>
+                                    <th>Sag</th>
+                                    <th>Cap</th>
+                                    <th>Aqu</th>
+                                    <th>Pis</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ashtakavargaTableBody">
+                                <tr>
+                                    <td colspan="14" class="loading-cell">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="sarvashtakavarga-summary" id="sarvashtakavargaSummary"
+                        style="margin-top: 1rem; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 8px; display: none;">
+                        <strong>Sarvashtakavarga Total: </strong><span id="savTotal">-</span>
+                    </div>
+                </div>
+
+                <!-- Dasha Periods -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <span class="title-icon">⏳</span>
+                        Vimshottari Dasha (Current Periods)
+                    </h3>
+                    <div class="dasha-container" id="dashaContainer">
+                        <div class="dasha-loading">Loading dasha periods...</div>
+                    </div>
+                </div>
+
+                <!-- Nakshatra Details -->
+                <div class="result-card">
+                    <h3 class="card-title">
+                        <span class="title-icon">✧</span>
+                        Birth Nakshatra Details
+                    </h3>
+                    <div class="nakshatra-details" id="nakshatraDetails">
+                        <div class="nakshatra-loading">Loading...</div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Data powered by <a href="https://vedastro.org" target="_blank" rel="noopener">VedAstro.org</a> — Open
+                Source Vedic Astrology</p>
+        </footer>
+    </div>
+
+    <!-- Error Toast -->
+    <div class="toast" id="errorToast">
+        <span class="toast-icon">⚠️</span>
+        <span class="toast-message" id="toastMessage">Error occurred</span>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
