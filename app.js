@@ -287,6 +287,12 @@ async function handleFormSubmit(e) {
         displayChartFromComplete('navamsaChart', completeData.charts.d9_navamsa, chartStyle);
         displayDivisionalCharts(completeData.charts);
 
+        // New features
+        displayDignityData(completeData.dignity);
+        displayBhavaBalaData(completeData.bhavaBala);
+        displayCharaKarakas(completeData.charaKarakas);
+        displaySpecialLagnas(completeData.specialLagnas);
+
         showResults();
     } catch (error) {
         console.error('API Error:', error);
@@ -1280,4 +1286,112 @@ function exportToMarkdown() {
 
 function exportToPdf() {
     window.print();
+}
+
+// ========================================
+// New Feature Display Functions
+// ========================================
+
+function displayDignityData(dignity) {
+    const tbody = document.getElementById('dignityTableBody');
+    if (!tbody || !dignity) return;
+
+    const planetOrder = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+    let rows = '';
+
+    planetOrder.forEach(planet => {
+        const d = dignity[planet];
+        if (d) {
+            const dignityClass = `dignity-${d.dignity.toLowerCase().replace(' ', '')}`;
+            const dignityBadge = `<span class="dignity-badge ${dignityClass}">${d.dignity}</span>`;
+
+            const sunDist = d.sunDistance !== null ? `${d.sunDistance}°` : '-';
+
+            const combustBadge = d.isCombust
+                ? '<span class="combust-badge">🔥 COMBUST</span>'
+                : '<span class="safe-badge">Safe</span>';
+
+            rows += `
+                <tr>
+                    <td>${PLANET_SYMBOLS[planet] || ''} ${planet}</td>
+                    <td>${dignityBadge}</td>
+                    <td>${sunDist}</td>
+                    <td>${planet === 'Sun' ? '-' : combustBadge}</td>
+                </tr>
+            `;
+        }
+    });
+
+    tbody.innerHTML = rows || '<tr><td colspan="4" class="loading-cell">No data</td></tr>';
+}
+
+function displayBhavaBalaData(bhavaBala) {
+    const tbody = document.getElementById('bhavaBalaTableBody');
+    if (!tbody || !bhavaBala) return;
+
+    // Find max strength for scaling
+    const strengths = Object.values(bhavaBala).map(h => h.strength);
+    const maxStrength = Math.max(...strengths);
+
+    let rows = '';
+    for (let i = 1; i <= 12; i++) {
+        const house = bhavaBala[`House ${i}`];
+        if (house) {
+            const pct = (house.strength / maxStrength) * 100;
+            const strengthClass = house.ratio >= 1.1 ? 'strength-strong' :
+                house.ratio >= 0.9 ? 'strength-medium' : 'strength-weak';
+            const status = house.ratio >= 1.1 ? 'Strong' :
+                house.ratio >= 0.9 ? 'Average' : 'Weak';
+
+            rows += `
+                <tr>
+                    <td>House ${i}</td>
+                    <td>
+                        <div class="strength-bar">
+                            <div class="strength-fill ${strengthClass}" style="width: ${pct}%"></div>
+                        </div>
+                        ${house.strength}
+                    </td>
+                    <td>${house.ratio}x</td>
+                    <td><span class="dignity-badge ${strengthClass.replace('strength-', 'dignity-').replace('strong', 'exalted').replace('medium', 'neutral').replace('weak', 'debilitated')}">${status}</span></td>
+                </tr>
+            `;
+        }
+    }
+
+    tbody.innerHTML = rows || '<tr><td colspan="4" class="loading-cell">No data</td></tr>';
+}
+
+function displayCharaKarakas(karakas) {
+    const container = document.getElementById('charaKarakasContainer');
+    if (!container || !karakas) return;
+
+    let html = '';
+    Object.entries(karakas).forEach(([name, data]) => {
+        html += `
+            <div class="karaka-item">
+                <span class="karaka-name">${name}</span>
+                <span class="karaka-house">House ${data.house}</span>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html || '<div class="loading-cell">No karaka data</div>';
+}
+
+function displaySpecialLagnas(lagnas) {
+    const container = document.getElementById('specialLagnasContainer');
+    if (!container || !lagnas) return;
+
+    let html = '';
+    Object.entries(lagnas).forEach(([name, data]) => {
+        html += `
+            <div class="lagna-item">
+                <span class="lagna-name">${name}</span>
+                <span class="lagna-house">House ${data.house}</span>
+            </div>
+        `;
+    });
+
+    container.innerHTML = html || '<div class="loading-cell">No lagna data</div>';
 }

@@ -1083,3 +1083,129 @@ body::before {
         color: black !important;
     }
 }
+
+/* ========================================
+   New Features: Dignity, Karakas, Lagnas
+   ======================================== */
+
+/* Karaka and Lagna Grids */
+.karaka-grid,
+.lagna-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    padding: 1rem 0;
+}
+
+.karaka-item,
+.lagna-item {
+    background: rgba(124, 58, 237, 0.1);
+    border: 1px solid rgba(124, 58, 237, 0.3);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.karaka-name,
+.lagna-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.karaka-house,
+.lagna-house {
+    background: var(--accent-primary);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Dignity Badges */
+.dignity-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.dignity-exalted {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    border: 1px solid #10b981;
+}
+
+.dignity-own {
+    background: rgba(59, 130, 246, 0.2);
+    color: #3b82f6;
+    border: 1px solid #3b82f6;
+}
+
+.dignity-moolatrikona {
+    background: rgba(139, 92, 246, 0.2);
+    color: #8b5cf6;
+    border: 1px solid #8b5cf6;
+}
+
+.dignity-neutral {
+    background: rgba(107, 114, 128, 0.2);
+    color: #6b7280;
+    border: 1px solid #6b7280;
+}
+
+.dignity-debilitated {
+    background: rgba(239, 68, 68, 0.2);
+    color: #ef4444;
+    border: 1px solid #ef4444;
+}
+
+/* Combustion Badge */
+.combust-badge {
+    background: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+    border: 1px solid #f97316;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.safe-badge {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+}
+
+/* Bhava Bala Strength Bar */
+.strength-bar {
+    width: 100px;
+    height: 8px;
+    background: rgba(107, 114, 128, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.strength-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.strength-strong {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.strength-medium {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.strength-weak {
+    background: linear-gradient(90deg, #ef4444, #f87171);
+}

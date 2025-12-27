@@ -8,15 +8,32 @@ A comprehensive Vedic astrology birth chart generator powered by **PyJHora**.
 
 ## ✨ Features
 
+### Core Charts
 - **D1 Rasi Chart** - Lagna chart with all 9 planets + Ascendant
 - **D9 Navamsa Chart** - Spouse and dharma chart
 - **Bhava Chalit** - Equal house system with cusp degrees
-- **Divisional Charts** - D3, D12, D45, D60
+- **Divisional Charts** - D3 (Drekkana), D12 (Dwadashamsha), D45 (Akshavedamsha), D60 (Shashtiamsha)
+
+### Strength Analysis
 - **Ashtakavarga** - Bhinnashtakavarga + Sarvashtakavarga (337 points)
 - **Shadbala** - 6-fold planetary strength
+- **Bhava Bala** - House strength with visual indicators
+
+### Advanced Features
+- **Planetary Dignity** - Exalted, Own Sign, Moolatrikona, Debilitated status
+- **Combustion Detection** - Distance from Sun with combustion alerts
+- **Chara Karakas** - Jaimini system (AK, AmK, BK, MK, PuK, GK, DK)
+- **Special Lagnas** - Bhava, Hora, Ghati, Varnada, Shree, Indu Lagnas
+- **Sphutas** - Sensitive points calculation
+
+### Planet Details
 - **Nakshatra & Pada** - Full nakshatra details for all planets
 - **Retrograde Detection** - Accurate planetary motion status
-- **Export** - Markdown and PDF export options
+- **House Positions** - Bhava Chalit based house placements
+
+### Export
+- **Markdown Export** - Full report download
+- **PDF Export** - Browser print functionality
 
 ## 🚀 Quick Start
 
