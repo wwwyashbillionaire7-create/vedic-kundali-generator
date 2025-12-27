@@ -292,6 +292,7 @@ async function handleFormSubmit(e) {
         displayBhavaBalaData(completeData.bhavaBala);
         displayCharaKarakas(completeData.charaKarakas);
         displaySpecialLagnas(completeData.specialLagnas);
+        displayThreeRashis(completeData.charts.rasi);
 
         showResults();
     } catch (error) {
@@ -1188,6 +1189,20 @@ function exportToMarkdown() {
     md += `| Timezone | ${birth.timezone || '-'} |\n`;
     md += `| Ayanamsa | ${birth.ayanamsa || '-'} |\n\n`;
 
+    // 3 Key Rashis
+    if (d.charts?.rasi) {
+        const ascendant = d.charts.rasi.find(p => p.planet === 'Ascendant');
+        const moon = d.charts.rasi.find(p => p.planet === 'Moon');
+        const sun = d.charts.rasi.find(p => p.planet === 'Sun');
+
+        md += `## Primary Rashis (Key Signs)\n\n`;
+        md += `| Concept | Sign | Meaning |\n|---------|------|---------|\n`;
+        if (ascendant) md += `| **Lagna Rashi** | ${ascendant.sign} | Physical Body & Self (Ascendant) |\n`;
+        if (moon) md += `| **Chandra Rashi** | ${moon.sign} | Mind & Emotions (Moon Sign) |\n`;
+        if (sun) md += `| **Surya Rashi** | ${sun.sign} | Soul & Authority (Sun Sign) |\n`;
+        md += `\n`;
+    }
+
     // D1 Rasi Chart
     md += `## D1 - Rasi Chart (Lagna)\n\n`;
     md += `| Planet | Sign | Degree |\n|--------|------|--------|\n`;
@@ -1450,4 +1465,34 @@ function displaySpecialLagnas(lagnas) {
     });
 
     container.innerHTML = html || '<div class="loading-cell">No lagna data</div>';
+}
+
+function displayThreeRashis(rasiChart) {
+    if (!rasiChart) return;
+
+    const signSymbols = {
+        'Aries': '♈ Aries', 'Taurus': '♉ Taurus', 'Gemini': '♊ Gemini',
+        'Cancer': '♋ Cancer', 'Leo': '♌ Leo', 'Virgo': '♍ Virgo',
+        'Libra': '♎ Libra', 'Scorpio': '♏ Scorpio', 'Sagittarius': '♐ Sagittarius',
+        'Capricorn': '♑ Capricorn', 'Aquarius': '♒ Aquarius', 'Pisces': '♓ Pisces'
+    };
+
+    // Find Ascendant, Moon, and Sun
+    const ascendant = rasiChart.find(p => p.planet === 'Ascendant');
+    const moon = rasiChart.find(p => p.planet === 'Moon');
+    const sun = rasiChart.find(p => p.planet === 'Sun');
+
+    const lagnaRashiEl = document.getElementById('lagnaRashi');
+    const chandraRashiEl = document.getElementById('chandraRashi');
+    const suryaRashiEl = document.getElementById('suryaRashi');
+
+    if (lagnaRashiEl && ascendant) {
+        lagnaRashiEl.textContent = signSymbols[ascendant.sign] || ascendant.sign;
+    }
+    if (chandraRashiEl && moon) {
+        chandraRashiEl.textContent = signSymbols[moon.sign] || moon.sign;
+    }
+    if (suryaRashiEl && sun) {
+        suryaRashiEl.textContent = signSymbols[sun.sign] || sun.sign;
+    }
 }
